@@ -9,6 +9,7 @@ from random import randint
 
 # build global variables
 starter_piece = []
+game_turn = ""
 
 
 def build_dominoes():
@@ -130,19 +131,38 @@ def first_play(dominoes, snake):
     return next_turn, dominoes, snake
 
 
+def game_screen(player, computer, stock, current, next_turn):
+    """
+    :param player: player pieces
+    :param computer: computer pieces
+    :param stock: remaining stock pieces
+    :param current: current piece to be played
+    :param next_turn: the next player ready to take a turn
+    """
+    print("======================================================================")
+    print(f'Stock size: {len(stock)}')
+    print(f'Computer pieces: {len(computer)}')
+    print()
+    print(*current)
+    print()
+    print('Your pieces:')
+    num = 1
+    for i in range(len(player)):
+        print(f'{num}:{player[i]}')
+        num += 1
+    print()
+    if next_turn == 'player':
+        print("Status: It's your turn to make a move. Enter your command.")
+    else:
+        print("Status: Computer is about to make a move. Press Enter to continue...")
+
+
 # --- MAIN BODY OF GAME --- #
 game_pieces = build_dominoes()
 
-# Create player_pieces, cpu_pieces, remaining_stack, and the starter_piece (can't be empty)
 while not starter_piece:
     game_pieces = shuffle_dominoes(game_pieces)
     game_turn, game_pieces, starter_piece = first_play(game_pieces, starter_piece)
 
 player_pieces, cpu_pieces, remaining_stack = assign_stacks(game_pieces)
-
-# Print required outputs for 1.0
-print(f'Stock pieces: {remaining_stack}')
-print(f'Computer pieces: {cpu_pieces}')
-print(f'Player pieces: {player_pieces}')
-print(f'Domino snake: {starter_piece}')
-print(f'Status: {game_turn}')
+game_screen(player_pieces, cpu_pieces, remaining_stack, starter_piece, game_turn)

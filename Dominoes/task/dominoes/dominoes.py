@@ -4,12 +4,17 @@ ID the snake, determine who goes first, and output the variables.
 """
 
 
-# generate random integer values
 from random import randint
+import collections
 
 # build global variables
 starter_piece = []
 game_turn = ""
+
+input_deque = collections.deque()
+updated_deque = collections.deque()
+#for i in input_list:
+#    input_deque.append(i)
 
 
 def build_dominoes():
@@ -18,13 +23,16 @@ def build_dominoes():
     """
     # Create the dominoes.
     stack = []
+    rev_stack = []
     for i in range(0, 7):
         for j in range(0, 7):
             var = [i, j]
+            rev_var = [j, i]
             if ([i, j] in stack) or ([j, i] in stack):
                 pass
             else:
                 stack.append(var)
+                rev_stack.append(rev_var)
 
     # Build the default domino values.  They are 'assigned' to 'none', have not been played, and default as not a snake.
     working_dict = {}
@@ -50,11 +58,17 @@ def build_dominoes():
     for i in stack:
         key = {'value'}
         value = i
-        inside_dict = dict.fromkeys(key, value)
-        inside_dict.update(working_dict)
+        inside_dict1 = dict.fromkeys(key, value)
+        inside_dict1.update(working_dict)
+
+        key = {'rev_value'}
+        rl = [i[1], i[0]]
+        value = rl
+        inside_dict2 = dict.fromkeys(key, value)
+        inside_dict1.update(inside_dict2)
 
         key = {ind}
-        value = inside_dict
+        value = inside_dict1
         outside_dict = dict.fromkeys(key, value)
         dominoes.update(outside_dict)
         ind += 1

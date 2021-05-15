@@ -8,13 +8,13 @@ from random import randint
 import collections
 
 # build global variables
-starter_piece = []
+played_doms = []
 game_turn = ""
+game_over = False
 
-input_deque = collections.deque()
+in_game_snake_deque = collections.deque()
 updated_deque = collections.deque()
-#for i in input_list:
-#    input_deque.append(i)
+
 
 
 def build_dominoes():
@@ -100,15 +100,18 @@ def shuffle_dominoes(dominoes):
     return dominoes
 
 
-def assign_stacks(dominoes):
+def update_stacks(dominoes):
     """
-    Take the dominoes as a variable and return the current player, computer, and stock stacks
+    Take the dominoes as a variable and return the current player, computer, and stock stacks containing their order
+    to be displayed on screen, the value, and the index of that domino in the dictionary
     """
 
     count = 0
     stock = []
     computer = []
     player = []
+    player_out = []
+    computer_out = []
     for i in dominoes:
         if dominoes[i]['assigned'] == 'none':
             stock.append(dominoes[i]['value'])
@@ -118,7 +121,17 @@ def assign_stacks(dominoes):
             player.append(dominoes[i]['value'])
         count += 1
 
-    return player, computer, stock
+    cnt = 1
+    for i in range(len(computer)):
+        computer_out.append([cnt, computer[i], i])
+        cnt += 1
+
+    cnt = 1
+    for i in range(len(player)):
+        player_out.append([cnt, player[i], i])
+        cnt += 1
+
+    return player_out, computer_out, stock
 
 
 def first_play(dominoes, snake):
@@ -145,38 +158,47 @@ def first_play(dominoes, snake):
     return next_turn, dominoes, snake
 
 
-def game_screen(player, computer, stock, current, next_turn):
+def take_turn(player, cpu, unplayed, played, turn):
+    """determine the current player, decide whether to pick or play"""
+
+    # Find left and right most played numbers
+    left = played[0][0]
+    right = played[len(played)][1]
+
+    # Determine if active player has a playable domino in their stack
+
+
+    # Randomly pick a playable domino if one exists
+
+
+    # Draw a new domino if no playable domino in stack exists
+
+def game_screen(player, computer, stock, played, turn):
     """
-    :param player: player pieces
-    :param computer: computer pieces
-    :param stock: remaining stock pieces
-    :param current: current piece to be played
-    :param next_turn: the next player ready to take a turn
+    Create the game screen and display the output
     """
     print("======================================================================")
     print(f'Stock size: {len(stock)}')
     print(f'Computer pieces: {len(computer)}')
     print()
-    print(*current)
+    print(*played)
     print()
     print('Your pieces:')
-    num = 1
     for i in range(len(player)):
-        print(f'{num}:{player[i]}')
-        num += 1
+        print(f'{player[i][0]}:{player[i][1]}')
     print()
-    if next_turn == 'player':
+    if turn == 'player':
         print("Status: It's your turn to make a move. Enter your command.")
     else:
         print("Status: Computer is about to make a move. Press Enter to continue...")
 
 
 # --- MAIN BODY OF GAME --- #
-game_pieces = build_dominoes()
+dominoes_dict = build_dominoes()
 
-while not starter_piece:
-    game_pieces = shuffle_dominoes(game_pieces)
-    game_turn, game_pieces, starter_piece = first_play(game_pieces, starter_piece)
+while not played_doms:
+    dominoes_dict = shuffle_dominoes(dominoes_dict)
+    game_turn, dominoes_dict, played_doms = first_play(dominoes_dict, played_doms)
 
-player_pieces, cpu_pieces, remaining_stack = assign_stacks(game_pieces)
-game_screen(player_pieces, cpu_pieces, remaining_stack, starter_piece, game_turn)
+player_doms, cpu_doms, unplayed_doms = update_stacks(dominoes_dict)
+game_screen(player_doms, cpu_doms, unplayed_doms, played_doms, game_turn)

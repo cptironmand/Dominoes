@@ -10,7 +10,7 @@ import collections
 # build global variables
 played_doms = collections.deque()
 game_turn = ""
-game_over = False
+game_winner = False
 
 
 def build_dominoes():
@@ -155,8 +155,10 @@ def first_play(dominoes, played):
     return next_turn, dominoes, played
 
 
-def cpu_turn(dominoes, played):
+def cpu_turn(dominoes, played, winner):
     """CPU turn; play an available domino or pick one"""
+    if winner:
+        return None
 
     # Find left and right most played numbers
     left = played[0][0]
@@ -189,15 +191,92 @@ def cpu_turn(dominoes, played):
         for i in dominoes:
             if not dominoes[i]['assigned']:
                 draw_pile.append(i)
-        pick = random.choice(draw_pile)
-        dominoes[pick]['assigned'] = 'computer'
+
+        if len(draw_pile) > 0:
+            pick = random.choice(draw_pile)
+            dominoes[pick]['assigned'] = 'computer'
+        else:
+            winner = 'draw'
 
     turn = 'player'
+    return dominoes, played, turn, winner
 
-    return dominoes, played, turn
+
+def player_turn(dominoes, played, winner):
+    """Player turn; play an available domino or pick one"""
+    if winner:
+        return None
+
+    # Find left and right most played numbers
+    left = played[0][0]
+    length = len(played)
+    right = played[length-1][1]
+
+    # Determine if computer has a playable domino in their stack
+    playable = False
+    length = len(played)
+
+    for i in dominoes:
+        if dominoes[i]['assigned'] == 'player':
+            if left == dominoes[i]['value'][1]:
+                played.appendleft(dominoes[i]['value'])
+            elif left == dominoes[i]['rev_value'][1]:
+                played.appendleft(dominoes[i]['rev_value'])
+            elif right == dominoes[i]['value'][0]:
+                played.append(dominoes[i]['value'])
+            elif right == dominoes[i]['rev_value'][0]:
+                played.append(dominoes[i]['rev_value'])
+
+            if len(played) > length:
+                dominoes[i]['assigned'] = 'played'
+                playable = True
+                break
+
+    # Draw a new domino if no playable domino in stack exists
+    if not playable:
+        draw_pile = []
+        for i in dominoes:
+            if not dominoes[i]['assigned']:
+                draw_pile.append(i)
+
+        if len(draw_pile) > 0:
+            pick = random.choice(draw_pile)
+            dominoes[pick]['assigned'] = 'player'
+        else:
+            winner = 'draw'
+
+    turn = 'computer'
+    return dominoes, played, turn, winner
 
 
-def game_screen(player, computer, stock, played, turn, dominoes):
+def check_winner(player, computer, played, winner):
+    if winner:
+        return winner
+
+    # Winning Condition 1.a - Player runs out of pieces
+    if len(player) < 1:
+        winner = 'player'
+
+    # Winning Condition 1.b - CPU runs out of pieces
+    if len(computer) < 1:
+        winner = 'computer'
+
+    # Draw condition - same end values and appear 8 times
+    left = played[0][0]
+    length = len(played)
+    right = played[length-1][1]
+    count = 0
+    if left == right:
+        for i in played:
+            for j in i:
+                if j == left:
+                    count += 1
+    if count == 8:
+        winner = 'draw'
+
+    return winner
+
+def game_screen(player, computer, stock, played, turn, dominoes, winner):
     """
     Create the game screen and display the output
     """
@@ -212,10 +291,20 @@ def game_screen(player, computer, stock, played, turn, dominoes):
     for i in range(len(player)):
         print(f'{player[i][0]}: {dominoes[player[i][1]]["value"]}')
     print()
-    if turn == 'player':
-        print("Status: It's your turn to make a move. Enter your command.")
-    else:
-        print("Status: Computer is about to make a move. Press Enter to continue...")
+    if not winner:
+        if turn == 'player':
+            print("Status: It's your turn to make a move. Enter your command.")
+            nothing = input()
+        else:
+            print("Status: Computer is about to make a move. Press Enter to continue...")
+            nothing = input()
+    if winner:
+        if winner == 'player':
+            print("Status: The game is over. You won!")
+        if winner == 'computer':
+            print("Status: The game is over. The computer won!")
+        if winner == 'draw':
+            print("Status: The game is over. It's a draw!")
 
 
 # --- MAIN BODY OF GAME --- #
@@ -226,8 +315,14 @@ while not played_doms:
     game_turn, dominoes_dict, played_doms = first_play(dominoes_dict, played_doms)
 
 player_doms, cpu_doms, unplayed_doms = update_stacks(dominoes_dict)
-game_screen(player_doms, cpu_doms, unplayed_doms, played_doms, game_turn, dominoes_dict)
+game_screen(player_doms, cpu_doms, unplayed_doms, played_doms, game_turn, dominoes_dict, game_winner)
 
-dominoes_dict, played_doms, game_turn = cpu_turn(dominoes_dict, played_doms)
-player_doms, cpu_doms, unplayed_doms = update_stacks(dominoes_dict)
-game_screen(player_doms, cpu_doms, unplayed_doms, played_doms, game_turn, dominoes_dict)
+while not game_winner:
+    if game_turn == 'computer':
+        dominoes_dict, played_doms, game_turn, game_winner = cpu_turn(dominoes_dict, played_doms, game_winner)
+    else:
+        dominoes_dict, played_doms, game_turn, game_winner = player_turn(dominoes_dict, played_doms, game_winner)
+    player_doms, cpu_doms, unplayed_doms = update_stacks(dominoes_dict)
+    game_winner = check_winner(player_doms, cpu_doms, played_doms, game_winner)
+    game_screen(player_doms, cpu_doms, unplayed_doms, played_doms, game_turn, dominoes_dict, game_winner)
+

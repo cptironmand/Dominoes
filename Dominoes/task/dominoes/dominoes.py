@@ -38,11 +38,6 @@ def build_dominoes():
     new_dict = dict.fromkeys(key, value)
     working_dict.update(new_dict)
 
-    #key = {'played'}
-    #value = False
-    #new_dict = dict.fromkeys(key, value)
-    #working_dict.update(new_dict)
-
     key = {'snake'}
     value = False
     new_dict = dict.fromkeys(key, value)
@@ -202,7 +197,7 @@ def cpu_turn(dominoes, played, winner):
     return dominoes, played, turn, winner
 
 
-def player_turn(dominoes, played, winner):
+def player_turn(player, dominoes, played, winner):
     """Player turn; play an available domino or pick one"""
     if winner:
         return None
@@ -212,9 +207,47 @@ def player_turn(dominoes, played, winner):
     length = len(played)
     right = played[length-1][1]
 
-    # Determine if computer has a playable domino in their stack
+    # Determine if player has a playable domino in their stack
     playable = False
     length = len(played)
+
+    pick = False
+    while not pick:
+        move = input()
+        move = int(move)
+        if move == 0:
+            draw_pile = []
+            for i in dominoes:
+                if not dominoes[i]['assigned']:
+                    draw_pile.append(i)
+
+            if len(draw_pile) > 0:
+                pick = random.choice(draw_pile)
+                dominoes[pick]['assigned'] = 'player'
+            else:
+                winner = 'draw'
+
+        elif move > 0:
+            ind = player[move-1][1]
+            if right == dominoes[ind]['value'][0]:
+                played.append(dominoes[player[move-1][1]]['value'])
+            elif right == dominoes[ind]['rev_value'][0]:
+                played.append(dominoes[player[move-1][1]]['rev_value'])
+            else:
+                print("Invalid input. Please try again.")
+
+        elif move < 0:
+            num = abs(move)
+            ind = player[num-1][1]
+            if left == dominoes[ind]['value'][1]:
+                played.appendleft(dominoes[player[num][1]]['value'])
+            elif left == dominoes[ind]['rev_value'][1]:
+                played.appendleft(dominoes[player[num][1]]['rev_value'])
+            else:
+                print("Invalid input. Please try again.")
+
+        if winner or (length < len(played)):
+            pick = True
 
     for i in dominoes:
         if dominoes[i]['assigned'] == 'player':
@@ -232,18 +265,6 @@ def player_turn(dominoes, played, winner):
                 playable = True
                 break
 
-    # Draw a new domino if no playable domino in stack exists
-    if not playable:
-        draw_pile = []
-        for i in dominoes:
-            if not dominoes[i]['assigned']:
-                draw_pile.append(i)
-
-        if len(draw_pile) > 0:
-            pick = random.choice(draw_pile)
-            dominoes[pick]['assigned'] = 'player'
-        else:
-            winner = 'draw'
 
     turn = 'computer'
     return dominoes, played, turn, winner
@@ -293,10 +314,10 @@ def game_screen(player, computer, stock, played, turn, dominoes, winner):
     print()
     if not winner:
         if turn == 'player':
-            print("Status: It's your turn to make a move. Enter your command.")
+            print("Status: It's your turn to make a move. Enter your command.\n")
             nothing = input()
         else:
-            print("Status: Computer is about to make a move. Press Enter to continue...")
+            print("Status: Computer is about to make a move. Press Enter to continue...\n")
             nothing = input()
     if winner:
         if winner == 'player':
@@ -321,7 +342,7 @@ while not game_winner:
     if game_turn == 'computer':
         dominoes_dict, played_doms, game_turn, game_winner = cpu_turn(dominoes_dict, played_doms, game_winner)
     else:
-        dominoes_dict, played_doms, game_turn, game_winner = player_turn(dominoes_dict, played_doms, game_winner)
+        dominoes_dict, played_doms, game_turn, game_winner = player_turn(player_doms, dominoes_dict, played_doms, game_winner)
     player_doms, cpu_doms, unplayed_doms = update_stacks(dominoes_dict)
     game_winner = check_winner(player_doms, cpu_doms, played_doms, game_winner)
     game_screen(player_doms, cpu_doms, unplayed_doms, played_doms, game_turn, dominoes_dict, game_winner)

@@ -348,5 +348,36 @@ files:
         TestStage3('dominoes.dominoes').run_tests()
   learner_created: false
 feedback_link: https://hyperskill.org/projects/146/stages/788/implement#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #1
+
+    Make sure your output is formatted according to the examples
+
+    Please find below the output of your program during this failed test.
+    Note that the '>' character indicates the beginning of the input line.
+
+    ---
+
+    ======================================================================
+    Stock size: 14
+    Computer pieces: 6
+
+    [4, 4]
+
+    Your pieces:
+    1:[0, 5]
+    2:[0, 6]
+    3:[1, 2]
+    4:[1, 3]
+    5:[1, 4]
+    6:[2, 5]
+    7:[2, 6]
+
+    Status: It's your turn to make a move. Enter your command.
+
+    > 1
+    Invalid input. Please try again.
+  time: Wed, 19 May 2021 00:53:52 UTC
 record: -1

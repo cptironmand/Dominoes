@@ -221,8 +221,9 @@ def player_turn(player, dominoes, played, winner):
     right = played[length-1][1]
 
     pick = False
+    print("Status: It's your turn to make a move. Enter your command.\n")
     while not pick:
-        cmd = input("Status: It's your turn to make a move. Enter your command.\n")
+        cmd = input()
         cmd = int(cmd)
         if cmd == 0:
             draw_pile = []
@@ -306,7 +307,7 @@ def game_screen(player, computer, stock, played, turn, dominoes, winner):
     print()
     print('Your pieces:')
     for i in range(len(player)):
-        print(f'{i+1}: {dominoes[player[i]]["value"]}')
+        print(f'{i+1}:{dominoes[player[i]]["value"]}')
     print()
     if not winner:
         if turn == 'player':

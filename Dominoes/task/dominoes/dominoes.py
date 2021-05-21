@@ -163,7 +163,7 @@ def first_play(dominoes, played):
 
 def cpu_turn(dominoes, played, winner):
     """CPU turn; play an available domino or pick one"""
-    cmd = input("Status: Computer is about to make a move. Press Enter to continue...")
+    cmd = input("Status: Computer is about to make a move. Press Enter to continue...\n")
 
     if winner:
         return None
@@ -221,13 +221,13 @@ def player_turn(player, dominoes, played, winner):
     right = played[length-1][1]
 
     pick = False
-    print("Status: It's your turn to make a move. Enter your command.")
+    print("Status: It's your turn to make a move. Enter your command.\n")
     while not pick:
         cmd = input()
         cmd = int(cmd)
 
         if abs(cmd) > len(player):
-            print("Invalid input. Please try again.")
+            print("Invalid input. Please try again.\n")
 
         elif cmd == 0:
             draw_pile = []
@@ -250,7 +250,7 @@ def player_turn(player, dominoes, played, winner):
                 played.append(dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
-                print("Invalid input. Please try again.")
+                print("Invalid input. Please try again.\n")
 
         elif cmd < 0:
             num = abs(cmd)
@@ -262,7 +262,7 @@ def player_turn(player, dominoes, played, winner):
                 played.insert(0, dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
-                print("Invalid input. Please try again.")
+                print("Invalid input. Please try again.\n")
 
         if winner or (length < len(played)):
             pick = True

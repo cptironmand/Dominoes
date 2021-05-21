@@ -7,7 +7,7 @@ import random
 import collections
 
 # build global variables
-played_deque = collections.deque()
+played_list = []
 game_turn = ""
 game_winner = False
 
@@ -180,9 +180,9 @@ def cpu_turn(dominoes, played, winner):
     for i in dominoes:
         if dominoes[i]['assigned'] == 'computer':
             if left == dominoes[i]['value'][1]:
-                played.appendleft(dominoes[i]['value'])
+                played.insert(0, dominoes[i]['value'])
             elif left == dominoes[i]['rev_value'][1]:
-                played.appendleft(dominoes[i]['rev_value'])
+                played.insert(0, dominoes[i]['rev_value'])
             elif right == dominoes[i]['value'][0]:
                 played.append(dominoes[i]['value'])
             elif right == dominoes[i]['rev_value'][0]:
@@ -221,11 +221,15 @@ def player_turn(player, dominoes, played, winner):
     right = played[length-1][1]
 
     pick = False
-    print("Status: It's your turn to make a move. Enter your command.\n")
+    print("Status: It's your turn to make a move. Enter your command.")
     while not pick:
         cmd = input()
         cmd = int(cmd)
-        if cmd == 0:
+
+        if abs(cmd) > len(player):
+            print("Invalid input. Please try again.")
+
+        elif cmd == 0:
             draw_pile = []
             for i in dominoes:
                 if not dominoes[i]['assigned']:
@@ -252,10 +256,10 @@ def player_turn(player, dominoes, played, winner):
             num = abs(cmd)
             ind = player[num-1]
             if left == dominoes[ind]['value'][1]:
-                played.appendleft(dominoes[ind]['value'])
+                played.insert(0, dominoes[ind]['value'])
                 dominoes[ind]['assigned'] = 'played'
             elif left == dominoes[ind]['rev_value'][1]:
-                played.appendleft(dominoes[ind]['rev_value'])
+                played.insert(0, dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
                 print("Invalid input. Please try again.")
@@ -295,6 +299,32 @@ def check_winner(player, computer, played, winner):
     return winner
 
 
+def played_dominoes(played):
+    """This function will display the played dominoes.  If there are 6 or more dominoes played, it will limit the output
+    to two sets of 3 separated by a '...' """
+
+    length = len(played)
+    if length < 7:
+        print(*played)
+    elif length > 6:
+        abbr_played = []
+        one = played[0]
+        two = played[1]
+        three = played[2]
+        six = played[-1]
+        five = played[-2]
+        four = played[-3]
+        middle = '...'
+        abbr_played.append(one)
+        abbr_played.append(two)
+        abbr_played.append(three)
+        abbr_played.append(middle)
+        abbr_played.append(four)
+        abbr_played.append(five)
+        abbr_played.append(six)
+        print(*abbr_played)
+
+
 def game_screen(player, computer, stock, played, turn, dominoes, winner):
     """
     Create the game screen and display the output
@@ -303,7 +333,7 @@ def game_screen(player, computer, stock, played, turn, dominoes, winner):
     print(f'Stock size: {len(stock)}')
     print(f'Computer pieces: {len(computer)}')
     print()
-    print(*played)
+    played_dominoes(played)
     print()
     print('Your pieces:')
     for i in range(len(player)):
@@ -330,19 +360,19 @@ def game_screen(player, computer, stock, played, turn, dominoes, winner):
 # --- MAIN BODY OF GAME --- #
 doms_dict = build_dominoes()
 
-while not played_deque:
+while not played_list:
     doms_dict = shuffle_dominoes(doms_dict)
-    game_turn, doms_dict, played_deque = first_play(doms_dict, played_deque)
+    game_turn, doms_dict, played_list = first_play(doms_dict, played_list)
 
 player1, cpu1, unused = update_stacks(doms_dict)
-player1, cpu1, unused, played_deque, game_turn, doms_dict, game_winner = game_screen(player1, cpu1, unused,
-                                                                                     played_deque, game_turn,
-                                                                                     doms_dict, game_winner)
+player1, cpu1, unused, played_list, game_turn, doms_dict, game_winner = game_screen(player1, cpu1, unused,
+                                                                                    played_list, game_turn,
+                                                                                    doms_dict, game_winner)
 
 
 while not game_winner:
     player1, cpu1, unused = update_stacks(doms_dict)
-    game_winner = check_winner(player1, cpu1, played_deque, game_winner)
-    player1, cpu1, unused, played_deque, game_turn, doms_dict, game_winner = game_screen(player1, cpu1, unused,
-                                                                                         played_deque, game_turn,
-                                                                                         doms_dict, game_winner)
+    game_winner = check_winner(player1, cpu1, played_list, game_winner)
+    player1, cpu1, unused, played_list, game_turn, doms_dict, game_winner = game_screen(player1, cpu1, unused,
+                                                                                        played_list, game_turn,
+                                                                                        doms_dict, game_winner)

@@ -350,34 +350,15 @@ files:
 feedback_link: https://hyperskill.org/projects/146/stages/788/implement#comment
 status: Failed
 feedback:
-  message: |-
-    Wrong answer in test #1
-
-    Make sure your output is formatted according to the examples
-
-    Please find below the output of your program during this failed test.
-    Note that the '>' character indicates the beginning of the input line.
-
-    ---
-
-    ======================================================================
-    Stock size: 14
-    Computer pieces: 6
-
-    [3, 3]
-
-    Your pieces:
-    1:[0, 1]
-    2:[0, 3]
-    3:[0, 6]
-    4:[2, 6]
-    5:[3, 4]
-    6:[3, 5]
-    7:[4, 6]
-
-    Status: It's your turn to make a move. Enter your command.
-
-    > 1
-    Invalid input. Please try again.
-  time: Fri, 21 May 2021 01:35:17 UTC
+  message: "Wrong answer in test #1\n\nMake sure your output is formatted according\
+    \ to the examples\n\nPlease find below the output of your program during this\
+    \ failed test.\nNote that the '>' character indicates the beginning of the input\
+    \ line.\n\n---\n\n======================================================================\n\
+    Stock size: 14\nComputer pieces: 7\n\n[5, 5]\n\nYour pieces:\n1:[0, 2]\n2:[0,\
+    \ 3]\n3:[1, 1]\n4:[1, 2]\n5:[2, 5]\n6:[3, 4]\n\nStatus: Computer is about to make\
+    \ a move. Press Enter to continue...\n> \n======================================================================\n\
+    Stock size: 14\nComputer pieces: 6\n\n[3, 5] [5, 5]\n\nYour pieces:\n1:[0, 2]\n\
+    2:[0, 3]\n3:[1, 1]\n4:[1, 2]\n5:[2, 5]\n6:[3, 4]\n\nStatus: It's your turn to\
+    \ make a move. Enter your command.\n\n> 1\nInvalid input. Please try again."
+  time: Fri, 21 May 2021 01:39:49 UTC
 record: -1

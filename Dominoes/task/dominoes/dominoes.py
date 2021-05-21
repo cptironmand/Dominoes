@@ -221,13 +221,17 @@ def player_turn(player, dominoes, played, winner):
     right = played[length-1][1]
 
     pick = False
-    print("Status: It's your turn to make a move. Enter your command.\n")
+    print("Status: It's your turn to make a move. Enter your command.")
     while not pick:
         cmd = input()
-        cmd = int(cmd)
+        try:
+            cmd = int(cmd)
+        except ValueError:
+            print("Invalid input. Please try again.")
+            continue
 
         if abs(cmd) > len(player):
-            print("Invalid input. Please try again.\n")
+            print("Invalid input. Please try again.")
 
         elif cmd == 0:
             draw_pile = []
@@ -250,7 +254,7 @@ def player_turn(player, dominoes, played, winner):
                 played.append(dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
-                print("Invalid input. Please try again.\n")
+                print("Invalid input. Please try again.")
 
         elif cmd < 0:
             num = abs(cmd)
@@ -262,7 +266,7 @@ def player_turn(player, dominoes, played, winner):
                 played.insert(0, dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
-                print("Invalid input. Please try again.\n")
+                print("Invalid input. Please try again.")
 
         if winner or (length < len(played)):
             pick = True

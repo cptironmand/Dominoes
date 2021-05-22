@@ -254,7 +254,7 @@ def player_turn(player, dominoes, played, winner):
                 played.append(dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
-                print("Invalid input. Please try again.")
+                print("Illegal move. Please try again.")
 
         elif cmd < 0:
             num = abs(cmd)
@@ -266,7 +266,7 @@ def player_turn(player, dominoes, played, winner):
                 played.insert(0, dominoes[ind]['rev_value'])
                 dominoes[ind]['assigned'] = 'played'
             else:
-                print("Invalid input. Please try again.")
+                print("Illegal move. Please try again.")
 
         if winner or (length < len(played)):
             pick = True
